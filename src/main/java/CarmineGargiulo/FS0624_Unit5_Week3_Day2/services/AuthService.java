@@ -16,7 +16,7 @@ public class AuthService {
 
     public String generateToken(EmployeesLoginDTO body) {
         Employee employee = employeesService.findEmployeeByUsername(body.username());
-        if (employee.getPassword().equals(body.username())) return jwt.genereteToken(employee);
+        if (employee.getPassword().equals(body.password())) return jwt.genereteToken(employee);
         else throw new UnauthorizedException("Invalid credentials");
     }
 }

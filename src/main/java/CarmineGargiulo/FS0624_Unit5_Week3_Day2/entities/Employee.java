@@ -2,6 +2,7 @@ package CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities;
 
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Table(name = "employees")
+@JsonIgnoreProperties({"accountNonLocked", "accountNonExpired", "credentialsNonExpired", "enabled", "authorities"})
 public class Employee implements UserDetails {
     @Id
     @GeneratedValue

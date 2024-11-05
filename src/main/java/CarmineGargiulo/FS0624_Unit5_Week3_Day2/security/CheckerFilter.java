@@ -1,22 +1,30 @@
 package CarmineGargiulo.FS0624_Unit5_Week3_Day2.security;
 
+import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Employee;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions.UnauthorizedException;
+import CarmineGargiulo.FS0624_Unit5_Week3_Day2.services.EmployeesService;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.tools.JWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @Component
 public class CheckerFilter extends OncePerRequestFilter {
     @Autowired
     private JWT jwt;
+    @Autowired
+    private EmployeesService employeesService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -26,6 +34,11 @@ public class CheckerFilter extends OncePerRequestFilter {
             throw new UnauthorizedException("Authorization header missing or invalid format");
         String token = authHeader.replace("Bearer ", "");
         jwt.verifyToken(token);
+        String employeeId = jwt.extractIdFromToken(token);
+        Employee currentEmployee = employeesService.findEmployeeById(UUID.fromString(employeeId));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(currentEmployee, null,
+                currentEmployee.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class TripsController {
     private TripsService tripsService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Page<Trip> getAllTrips(@RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "10") int size,
                                   @RequestParam(defaultValue = "date") String sortBy) {
@@ -30,6 +32,7 @@ public class TripsController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public Trip saveTrip(@RequestBody @Validated TripDTO body, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
@@ -38,6 +41,7 @@ public class TripsController {
     }
 
     @PatchMapping("/{tripId}/status")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Trip modifyStatus(@PathVariable UUID tripId, @RequestBody @Validated StatusDTO body,
                              BindingResult bindingResult) {
         if (bindingResult.hasErrors())
@@ -46,11 +50,13 @@ public class TripsController {
     }
 
     @GetMapping("/{tripId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Trip getSingleTrip(@PathVariable UUID tripId) {
         return tripsService.findTripById(tripId);
     }
 
     @PutMapping("/{tripId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Trip modifyTrip(@PathVariable UUID tripId, @RequestBody @Validated TripDTO body,
                            BindingResult bindingResult) {
         if (bindingResult.hasErrors())
@@ -59,6 +65,7 @@ public class TripsController {
     }
 
     @DeleteMapping("/{tripId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTrip(@PathVariable UUID tripId) {
         tripsService.findTripByIdAndDelete(tripId);
