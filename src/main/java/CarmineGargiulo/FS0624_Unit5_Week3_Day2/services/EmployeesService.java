@@ -8,6 +8,7 @@ import CarmineGargiulo.FS0624_Unit5_Week3_Day2.repositories.EmployeesRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,8 @@ import java.util.UUID;
 public class EmployeesService {
     @Autowired
     private EmployeesRepository employeesRepository;
-
+    @Autowired
+    private PasswordEncoder bcrypt;
     @Autowired
     private Cloudinary cloudinary;
 
@@ -31,7 +33,8 @@ public class EmployeesService {
         if (employeesRepository.existsByUsername(body.username()))
             throw new BadRequestException("Username already in use");
         if (employeesRepository.existsByEmail(body.email())) throw new BadRequestException("Email already in use");
-        return employeesRepository.save(new Employee(body.username(), body.name(), body.surname(), body.email(), body.password()));
+        return employeesRepository.save(new Employee(body.username(), body.name(), body.surname(), body.email(),
+                bcrypt.encode(body.password())));
     }
 
     public Employee findEmployeeById(UUID employeeId) {
@@ -54,7 +57,7 @@ public class EmployeesService {
             if (employeesRepository.existsByEmail(body.email())) throw new BadRequestException("Email already in use");
             searched.setEmail(body.email());
         }
-        searched.setPassword(body.password());
+        searched.setPassword(bcrypt.encode(body.password()));
         searched.setName(body.name());
         searched.setSurname(body.surname());
         return employeesRepository.save(searched);
@@ -77,7 +80,8 @@ public class EmployeesService {
     }
 
     public Employee findEmployeeByUsername(String username) {
-        return employeesRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Employee with username " + username + " does not exists"));
+        return employeesRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Employee with " +
+                "username " + username + " does not exists"));
     }
 
 }
