@@ -2,6 +2,7 @@ package CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions;
 
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +27,12 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDTO handleBadRequest(BadRequestException e) {
+        return new ErrorDTO(e.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDTO handleDenied(AuthorizationDeniedException e) {
         return new ErrorDTO(e.getMessage(), LocalDateTime.now());
     }
 
