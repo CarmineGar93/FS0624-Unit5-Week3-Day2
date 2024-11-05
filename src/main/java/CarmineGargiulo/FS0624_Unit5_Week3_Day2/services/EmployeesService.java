@@ -31,7 +31,7 @@ public class EmployeesService {
         if (employeesRepository.existsByUsername(body.username()))
             throw new BadRequestException("Username already in use");
         if (employeesRepository.existsByEmail(body.email())) throw new BadRequestException("Email already in use");
-        return employeesRepository.save(new Employee(body.username(), body.name(), body.surname(), body.email()));
+        return employeesRepository.save(new Employee(body.username(), body.name(), body.surname(), body.email(), body.password()));
     }
 
     public Employee findEmployeeById(UUID employeeId) {
@@ -54,6 +54,7 @@ public class EmployeesService {
             if (employeesRepository.existsByEmail(body.email())) throw new BadRequestException("Email already in use");
             searched.setEmail(body.email());
         }
+        searched.setPassword(body.password());
         searched.setName(body.name());
         searched.setSurname(body.surname());
         return employeesRepository.save(searched);
@@ -75,8 +76,8 @@ public class EmployeesService {
         }
     }
 
-    public Employee findEmployeeByEmail(String email) {
-        return employeesRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("Employee with email " + email + " does not exists"));
+    public Employee findEmployeeByUsername(String username) {
+        return employeesRepository.findByUsername(username).orElseThrow(() -> new NotFoundException("Employee with username " + username + " does not exists"));
     }
 
 }

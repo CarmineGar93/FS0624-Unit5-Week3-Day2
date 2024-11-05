@@ -31,12 +31,4 @@ public class JWT {
         }
     }
 
-   /* public String getEmployeeIdByToken(HttpHeaders headers, String secret) {
-        String token = headers.get("Authorization").getFirst();
-        String jwt = token.replace("Bearer ", "");
-        String userId =
-                Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parse(jwt).getPayload()
-                .toString();
-        return userId;
-    }*/
 }
