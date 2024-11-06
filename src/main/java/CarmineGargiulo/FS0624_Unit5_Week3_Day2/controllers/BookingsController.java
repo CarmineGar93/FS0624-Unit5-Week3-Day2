@@ -1,6 +1,7 @@
 package CarmineGargiulo.FS0624_Unit5_Week3_Day2.controllers;
 
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.dto.BookingDTO;
+import CarmineGargiulo.FS0624_Unit5_Week3_Day2.dto.PreferencesDTO;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Booking;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Employee;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions.BadRequestException;
@@ -65,5 +66,12 @@ public class BookingsController {
                                                       @RequestParam(defaultValue = "10") int size,
                                                       @RequestParam(defaultValue = "trip.date") String sortBy) {
         return bookingsService.findAllBookings(page, size, sortBy, current.getEmployeeId());
+    }
+
+    @PatchMapping("/mybookings/{bookingId}")
+    public Booking getBookingByCurrentIdAndUpdatePreferences(@AuthenticationPrincipal Employee current,
+                                                             @PathVariable UUID bookingId,
+                                                             @RequestBody PreferencesDTO body) {
+        return bookingsService.updatePreferences(current, bookingId, body);
     }
 }

@@ -1,11 +1,13 @@
 package CarmineGargiulo.FS0624_Unit5_Week3_Day2.services;
 
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.dto.BookingDTO;
+import CarmineGargiulo.FS0624_Unit5_Week3_Day2.dto.PreferencesDTO;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Booking;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Employee;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.entities.Trip;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions.BadRequestException;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions.NotFoundException;
+import CarmineGargiulo.FS0624_Unit5_Week3_Day2.exceptions.UnauthorizedException;
 import CarmineGargiulo.FS0624_Unit5_Week3_Day2.repositories.BookingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,4 +59,11 @@ public class BookingsService {
         bookingsRepository.delete(booking);
     }
 
+    public Booking updatePreferences(Employee current, UUID bookingId, PreferencesDTO body) {
+        Booking booking = findBookingById(bookingId);
+        if (booking.getEmployee().getEmployeeId().equals(current.getEmployeeId())) {
+            booking.setPreferences(body.preferences());
+            return bookingsRepository.save(booking);
+        } else throw new UnauthorizedException("Cannot set a preference. Booking not associated to current employee");
+    }
 }
