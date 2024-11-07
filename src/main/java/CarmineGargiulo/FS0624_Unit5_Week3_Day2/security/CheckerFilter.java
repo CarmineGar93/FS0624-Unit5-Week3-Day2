@@ -38,7 +38,7 @@ public class CheckerFilter extends OncePerRequestFilter {
         Employee currentEmployee = employeesService.findEmployeeById(UUID.fromString(employeeId));
         Authentication authentication = new UsernamePasswordAuthenticationToken(currentEmployee, null,
                 currentEmployee.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication); //nice
         filterChain.doFilter(request, response);
     }
 
